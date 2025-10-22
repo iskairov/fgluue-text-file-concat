@@ -1,5 +1,5 @@
 """
-FGlue v2.1: простое GUI-приложение для объединения файлов по шаблонам.
+FGlue v2.2: простое GUI-приложение для объединения файлов по шаблонам.
 by @iskairov
 """
 
@@ -30,6 +30,9 @@ class FileContext:
     total_lines = 0
     total_words = 0
     total_chars = 0
+
+    # Для отслеживания предыдущей папки
+    last_folder: str = ""
 
     def __init__(self, path: str) -> None:
         """
@@ -335,8 +338,10 @@ class FGlueApp:
         btn_frame.pack(fill="x", pady=5)
         # Основные действия справа
         ttk.Button(btn_frame, text="OK", command=self.merge_files).pack(side="right", padx=5)
+        ttk.Button(btn_frame, text="Очередь файлов", command=self.show_queue_window).pack(side="right", padx=5)
         ttk.Button(btn_frame, text="Обновить", command=self.refresh_files).pack(side="right")
         ttk.Button(btn_frame, text="Выбрать папку", command=self.choose_folder).pack(side="right")
+
         # Управление выбором слева
         ttk.Button(btn_frame, text="Выбрать все", command=lambda: self._set_all(True)).pack(side="left")
         ttk.Button(btn_frame, text="Снять все", command=lambda: self._set_all(False)).pack(side="left", padx=5)
@@ -726,6 +731,8 @@ class FGlueApp:
                 )
             with open(os.path.join(templates_dir, "7. Список файлов.txt"), "w", encoding="utf-8") as f:
                 f.write("{counter}. {path}{nl}")
+            with open(os.path.join(templates_dir, "8. Структура папок.txt"), "w", encoding="utf-8") as f:
+                f.write("{if_folder_changed}{folder}{nl}")
 
         # Загружаем файлы шаблонов: ключ — имя без расширения
         self.templates.clear()
@@ -835,11 +842,13 @@ class FGlueApp:
         # ----- Объединение файлов -----
 
         result = ""
+        last_folder = None  # Для отслеживания предыдущей папки
 
         for i, path in enumerate(selected_files):
             ctx = FileContext(path)
             temp_template = template
 
+            # --- {show_before} и {show_after}
             if i == 0:
                 # Первый файл: убираем show_after
                 temp_template = re.sub(r".*\{show_after}.*\n?", "", temp_template, flags=re.IGNORECASE)
@@ -852,6 +861,22 @@ class FGlueApp:
                 # "Средние" файлы: убираем и show_before, и show_after
                 temp_template = re.sub(r".*\{show_before}.*\n?", "", temp_template, flags=re.IGNORECASE)
                 temp_template = re.sub(r".*\{show_after}.*\n?", "", temp_template, flags=re.IGNORECASE)
+
+            # --- {if_folder_changed} ---
+            folder = os.path.dirname(path)
+
+            def folder_changed_repl(match: re.Match) -> str:
+                nonlocal last_folder  # если это внутри функции метода
+                folder = os.path.dirname(path)
+                if last_folder is not None and folder != last_folder:
+                    result = match.group(0).replace("{if_folder_changed}", "")
+                else:
+                    result = ""
+                last_folder = folder
+                return result
+
+            temp_template = re.sub(r".*\{if_folder_changed}.*\n?", folder_changed_repl, temp_template)
+            last_folder = folder
 
             result += ctx.format(temp_template)
 
@@ -949,6 +974,40 @@ class FGlueApp:
             with open(save_path, "w", encoding="utf-8") as f:
                 f.write(result)
             messagebox.showinfo("Готово", f"Файл сохранён: {save_path}")
+
+    def show_queue_window(self) -> None:
+        """ Отображает окно со списком файлов в порядке объединения. """
+
+        selected_files = self.get_selected_files()
+        if not selected_files:
+            messagebox.showinfo("Очередь файлов", "Нет выбранных файлов для объединения.")
+            return
+
+        queue_win = tk.Toplevel(self.root)
+        queue_win.title("Очередь файлов")
+        queue_win.minsize(400, 300)
+
+        # Панель инструментов с кнопками обновления
+        toolbar = ttk.Frame(queue_win)
+        toolbar.pack(fill="x", padx=5, pady=5)
+        ttk.Button(toolbar, text="Обновить", command=lambda: update_list()).pack(side="left", padx=2)
+
+        # Список файлов с вертикальной прокруткой
+        list_frame = ttk.Frame(queue_win)
+        list_frame.pack(fill="both", expand=True, padx=5, pady=5)
+        scrollbar = ttk.Scrollbar(list_frame)
+        scrollbar.pack(side="right", fill="y")
+        listbox = tk.Listbox(list_frame, yscrollcommand=scrollbar.set)
+        listbox.pack(side="left", fill="both", expand=True)
+        scrollbar.config(command=listbox.yview)
+
+        def update_list():
+            listbox.delete(0, "end")
+            for f in self.get_selected_files():
+                listbox.insert("end", f)
+
+        update_list()
+        self._center_window(queue_win)
 
 
 if __name__ == "__main__":

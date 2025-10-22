@@ -51,35 +51,35 @@ All placeholders fall into three categories:
 These placeholders insert file information or content.
 
 #### File Info
-- `{name}` — file name without extension  
-- `{extension}` — file extension (e.g., `txt`)  
-- `{filename}` — full file name (e.g., `notes.txt`)  
-- `{path}` — absolute file path  
-- `{folder}` — parent folder name  
-- `{drive}` — drive letter (Windows, e.g., `C:`)  
-- `{size}` — human-readable file size  
-- `{hash:md5}`, `{hash:sha1}` — MD5 or SHA1 hash of file content  
-- `{created}`, `{modified}`, `{accessed}` — file creation, modification, and access dates  
-  - Custom format supported: `{created:%d.%m.%Y %H:%M:%S}`
+- `{name}` — file name without extension.
+- `{extension}` — file extension (e.g., `txt`).
+- `{filename}` — full file name (e.g., `notes.txt`).
+- `{path}` — absolute file path.
+- `{folder}` — parent folder name.
+- `{drive}` — drive letter (Windows, e.g., `C:`).  
+- `{size}` — human-readable file size.
+- `{hash:md5}`, `{hash:sha1}` — MD5 or SHA1 hash of file content.
+- `{created}`, `{modified}`, `{accessed}` — file creation, modification, and access dates.  
+  - Custom format supported: `{created:%d.%m.%Y %H:%M:%S}`.
 
 #### Content
-- `{content}` — full file content  
-- `{content:numbered}` — file content with numbered lines  
-- `{line:N}` — the Nth line (1-based)  
-- `{lines:START;END}` — lines from START to END  
-- `{head:N}` — first N lines  
-- `{tail:N}` — last N lines  
-- `{char:N}`, `{chars:S;E}`, `{headchars:N}`, `{tailchars:N}` — same but for characters
+- `{content}` — full file content.
+- `{content:numbered}` — file content with numbered lines.
+- `{line:N}` — the Nth line (1-based).
+- `{lines:START;END}` — lines from START to END.  
+- `{head:N}` — first N lines.  
+- `{tail:N}` — last N lines.
+- `{char:N}`, `{chars:S;E}`, `{headchars:N}`, `{tailchars:N}` — same but for characters.
 
 #### Statistics and Counters
-- `{lines_count}`, `{words_count}`, `{chars_count}` — counts for the **current file**  
-- `{counter}` — sequential number of the processed file (starting at 1)  
-- `{current_files_count}`, `{current_lines_count}`, etc. — cumulative counters for the current operation  
-- `{total_files_count}`, `{total_lines_count}`, etc. — totals for all selected files
+- `{lines_count}`, `{words_count}`, `{chars_count}` — counts for the **current file**.
+- `{counter}` — sequential number of the processed file (starting at 1).
+- `{current_files_count}`, `{current_lines_count}`, etc. — cumulative counters for the current operation.
+- `{total_files_count}`, `{total_lines_count}`, etc. — totals for all selected files.
 
 #### Special Symbols
-- `{nl}` — newline  
-- `{_}` — space
+- `{nl}` — newline.
+- `{_}` — space.
 
 ---
 
@@ -88,13 +88,13 @@ These placeholders insert file information or content.
 These placeholders modify the `{content}` before inserting it.  
 Modifiers are applied **in sequence**.
 
-- `{upper}` — convert text to UPPERCASE  
-- `{lower}` — convert text to lowercase  
-- `{title}` — Capitalize Each Word  
-- `{remove_linebreaks}` — remove all line breaks (join lines)  
-- `{remove_blank_lines}` — remove empty lines only  
-- `{remove_whitespaces}` — replace multiple spaces and newlines with a single space  
-- `{remove_spaces}` — remove all spaces
+- `{upper}` — convert text to UPPERCASE.  
+- `{lower}` — convert text to lowercase.  
+- `{title}` — Capitalize Each Word.
+- `{remove_linebreaks}` — remove all line breaks (join lines). 
+- `{remove_blank_lines}` — remove empty lines only.
+- `{remove_whitespaces}` — replace multiple spaces and newlines with a single space.
+- `{remove_spaces}` — remove all spaces.
 
 **Example:**
 ```text
@@ -110,14 +110,15 @@ These placeholders control the merge process — they filter files or affect out
 They are processed **before** the file loop starts and removed from the final text.
 
 #### File Filtering
-- `{allow_ext:py;js;html}` — process only files with these extensions  
-- `{skip_ext:log;tmp}` — skip files with these extensions  
-- `{limit_files:10}` — process only the first 10 files
+- `{allow_ext:py;js;html}` — process only files with these extensions.
+- `{skip_ext:log;tmp}` — skip files with these extensions.
+- `{limit_files:10}` — process only the first 10 files.
 
 #### Output Control
-- `{x}` — remove the entire line containing this placeholder (useful for comments or cleanup)  
-- `{show_before}` — the line will be inserted **once**, before the first file’s result  
-- `{show_after}` — the line will be inserted **once**, after the last file’s result
+- `{x}` — remove the entire line containing this placeholder (useful for comments or cleanup).
+- `{show_before}` — the line will be inserted **once**, before the first file’s result.
+- `{show_after}` — the line will be inserted **once**, after the last file’s result.
+- `{if_folder_changed}` — the line will be inserted only if the current file is in a different folder than the previous one. If the folder is the same, the entire line is removed.
 
 **Example:**
 
@@ -237,6 +238,7 @@ File #{counter}: {filename}{nl}
 - `{x}` — полностью удалить строку шаблона, в которой находится этот плейсхолдер. Удобно для комментариев или для удаления строк с фильтрами.
 - `{show_before}` — текст в строке с этим плейсхолдером будет добавлен только **один раз**, перед результатом обработки первого файла.
 - `{show_after}` — текст в строке с этим плейсхолдером будет добавлен только **один раз**, после результата обработки последнего файла.
+- `{if_folder_changed}` — текст в строке с этим плейсхолдером будет вставлен только если текущий файл находится в другой папке, чем предыдущий. Если папка та же, строка полностью удаляется.
 
 **Пример использования `show_before` и `show_after`:**
 
