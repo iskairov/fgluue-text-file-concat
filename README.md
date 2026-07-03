@@ -95,8 +95,18 @@ Modifiers are applied **in sequence**.
 - `{remove_blank_lines}` — remove empty lines only.
 - `{remove_whitespaces}` — replace multiple spaces and newlines with a single space.
 - `{remove_spaces}` — remove all spaces.
+- `{indent:N}` — indent each line by N spaces (default: 4).
+- `{sort_lines}` — sort all lines alphabetically.
+- `{unique_lines}` — remove duplicate lines while preserving original order.
+- `{strip_lines}` — trim leading and trailing whitespace from each individual line.
+- `{prefix_lines:TEXT}` — add prefix TEXT to the beginning of each line.
+- `{suffix_lines:TEXT}` — add suffix TEXT to the end of each line.
+- `{replace:OLD;NEW}` — replace occurrences of plain text OLD with NEW.
+- `{grep:PATTERN}` — keep only lines that match regular expression PATTERN.
+- `{grep_v:PATTERN}` — exclude all lines that match regular expression PATTERN.
+- `{regex_replace:PATTERN;REPL}` — replace occurrences matching regular expression PATTERN with REPL.
 
-**Example:**
+- **Example:**
 ```text
 {remove_linebreaks}{content}
 ```
@@ -219,6 +229,16 @@ File #{counter}: {filename}{nl}
 - `{remove_blank_lines}` — удалить только пустые строки.
 - `{remove_whitespaces}` — заменить множественные пробелы и переносы на одиночные пробелы.
 - `{remove_spaces}` — удалить все пробелы.
+- `{indent:N}` — добавить отступ в N пробелов к каждой строке (по умолчанию: 4).
+- `{sort_lines}` — отсортировать все строки файла по алфавиту.
+- `{unique_lines}` — удалить дублирующиеся строки, сохраняя оригинальный порядок.
+- `{strip_lines}` — удалить пробельные символы в начале и конце каждой строки.
+- `{prefix_lines:ТЕКСТ}` — добавить указанный ТЕКСТ в начало каждой строки.
+- `{suffix_lines:ТЕКСТ}` — добавить указанный ТЕКСТ в конец каждой строки.
+- `{replace:ЧТО;НА_ЧТО}` — заменить подстроку ЧТО на НА_ЧТО.
+- `{grep:ШАБЛОН}` — оставить только те строки, которые соответствуют регулярному выражению ШАБЛОН.
+- `{grep_v:ШАБЛОН}` — исключить все строки, соответствующие регулярному выражению ШАБЛОН.
+- `{regex_replace:ШАБЛОН;ЗАМЕНА}` — заменить совпадения с регулярным выражением ШАБЛОН на значение ЗАМЕНА.
 
 **Пример:** Этот шаблон сначала удалит все переносы строк, а затем вставит измененное содержимое.
 ```text
